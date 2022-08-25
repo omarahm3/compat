@@ -10,14 +10,14 @@ services:
           memory: 128M
 
   mongo:
-    extends: base_service
+    compat: base_service
     container_name: database
     image: mongo
     ports:
       - '27017:27017'
 
   rabbitmq:
-    extends: base_service
+    compat: base_service
     container_name: rabbit
     image: rabbitmq
     ports:

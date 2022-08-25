@@ -8,7 +8,10 @@ import (
 	yaml "github.com/goccy/go-yaml"
 )
 
-const base_prefix = "base_"
+const (
+  base_prefix = "base_"
+  extends_token = "compat"
+)
 
 func Run(content []byte) error {
 	var yamlFile yaml.MapSlice
@@ -64,7 +67,7 @@ func processServices(services *yaml.MapItem) {
 	for _, service := range svcs {
 		svc := service.(map[string]interface{})
 		for k, baseServiceName := range svc {
-			if k == "extends" {
+			if k == extends_token {
 				delete(svc, k)
 				baseService := baseServices[baseServiceName.(string)].(map[string]interface{})
 
