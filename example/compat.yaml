@@ -1,0 +1,30 @@
+version: '3.2'
+services:
+  base_service:
+    deploy:
+      resources:
+        limits:
+          cpus: '0.1'
+          memory: 128M
+        reservations:
+          memory: 128M
+
+  mongo:
+    extends: base_service
+    container_name: database
+    image: mongo
+    ports:
+      - '27017:27017'
+
+  rabbitmq:
+    extends: base_service
+    container_name: rabbit
+    image: rabbitmq
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+
+  someService:
+    build:
+      context: ./
+      dockerfile: Dockerfile
