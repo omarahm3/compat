@@ -10,7 +10,7 @@ import (
 
 const (
   base_prefix = "base_"
-  extends_token = "compat"
+  extends_token = "inherit"
 )
 
 func Run(content []byte) error {
