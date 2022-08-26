@@ -50,7 +50,7 @@ func TestCompatFileExtensions(t *testing.T) {
 
 		cwd, _ := os.Getwd()
 
-    t.Run(fmt.Sprintf("should get correct file path for ext: %s", ext), func(it *testing.T) {
+		t.Run(fmt.Sprintf("should get correct file path for ext: %s", ext), func(it *testing.T) {
 			path, err := getCompatFilePath(cwd)
 
 			if err != nil {
@@ -62,7 +62,7 @@ func TestCompatFileExtensions(t *testing.T) {
 			}
 		})
 
-    t.Run(fmt.Sprintf("should read the correct content for ext: %s", ext), func(it *testing.T) {
+		t.Run(fmt.Sprintf("should read the correct content for ext: %s", ext), func(it *testing.T) {
 			content := readFile(fmt.Sprintf("%s/compat.%s", cwd, ext))
 
 			if !reflect.DeepEqual(string(content), fileContent) {

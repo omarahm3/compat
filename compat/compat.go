@@ -9,8 +9,8 @@ import (
 )
 
 const (
-  base_prefix = "base_"
-  extends_token = "inherit"
+	base_prefix   = "base_"
+	extends_token = "inherit"
 )
 
 func Run(content []byte) error {
@@ -35,20 +35,20 @@ func write(data *yaml.MapSlice) {
 
 	err := e.Encode(data)
 	must(err)
-  
-  path, err := os.Getwd()
-  must(err)
 
-  writeFile(buf, fmt.Sprintf("%s/docker-compose.yaml", path))
+	path, err := os.Getwd()
+	must(err)
+
+	writeFile(buf, fmt.Sprintf("%s/docker-compose.yaml", path))
 }
 
 func writeFile(data strings.Builder, composePath string) {
-  f, err := os.Create(composePath)
-  must(err)
-  defer f.Close()
+	f, err := os.Create(composePath)
+	must(err)
+	defer f.Close()
 
-  _, err = f.WriteString(data.String())
-  must(err)
+	_, err = f.WriteString(data.String())
+	must(err)
 }
 
 func processServices(services *yaml.MapItem) {
