@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	compat_file = "compat"
+	COMPAT_FILE = "compat"
 )
 
 func main() {
@@ -30,8 +30,8 @@ func main() {
 }
 
 func getCompatFilePath(cwd string) (*string, error) {
-	ymlFile := fmt.Sprintf("%s/%s.yml", cwd, compat_file)
-	yamlFile := fmt.Sprintf("%s/%s.yaml", cwd, compat_file)
+	ymlFile := fmt.Sprintf("%s/%s.yml", cwd, COMPAT_FILE)
+	yamlFile := fmt.Sprintf("%s/%s.yaml", cwd, COMPAT_FILE)
 
 	if _, err := os.Stat(ymlFile); !os.IsNotExist(err) {
 		return &ymlFile, nil
