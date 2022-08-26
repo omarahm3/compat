@@ -41,7 +41,9 @@ func CleanFile(ext string) error {
 }
 
 func TestCompatFileYml(t *testing.T) {
-	if err := InitFile("yml"); err != nil {
+  ext := "yaml"
+
+	if err := InitFile(ext); err != nil {
 		t.Error("Couldn't create Compat file")
 	}
 
@@ -54,20 +56,66 @@ func TestCompatFileYml(t *testing.T) {
 			it.Errorf("error getting compat file: %s", err.Error())
 		}
 
-		if !strings.Contains(*path, fmt.Sprintf("%s.yml", COMPAT_FILE)) {
+		if !strings.Contains(*path, fmt.Sprintf("%s.%s", COMPAT_FILE, ext)) {
 			it.Errorf("got the wrong compat file: %s", *path)
 		}
 	})
 
 	t.Run("should read the correct content", func(it *testing.T) {
-    content := readFile(fmt.Sprintf("%s/compat.yml", cwd))
+    content := readFile(fmt.Sprintf("%s/compat.%s", cwd, ext))
 
     if !reflect.DeepEqual(string(content), fileContent) {
       it.Error("content does not match file content")
     }
 	})
 
-	if err := CleanFile("yml"); err != nil {
-		t.Errorf("Couldn't remove comapt.yml")
+	if err := CleanFile(ext); err != nil {
+		t.Errorf("Couldn't remove comapt.%s", ext)
+	}
+}
+
+func TestCompatFileNotFound(t *testing.T) {
+  cwd, _ := os.Getwd()
+
+  t.Run("should return error", func(it *testing.T) {
+    _, err := getCompatFilePath(cwd)
+
+    if err == nil {
+      it.Errorf("expected error to be returned")
+    }
+  })
+}
+
+func TestCompatFileYaml(t *testing.T) {
+  ext := "yaml"
+
+	if err := InitFile(ext); err != nil {
+		t.Error("Couldn't create Compat file")
+	}
+
+  cwd, _ := os.Getwd()
+
+	t.Run("should get correct file path", func(it *testing.T) {
+		path, err := getCompatFilePath(cwd)
+
+		if err != nil {
+			it.Errorf("error getting compat file: %s", err.Error())
+		}
+
+		if !strings.Contains(*path, fmt.Sprintf("%s.%s", COMPAT_FILE, ext)) {
+			it.Errorf("got the wrong compat file: %s", *path)
+		}
+	})
+
+	t.Run("should read the correct content", func(it *testing.T) {
+    content := readFile(fmt.Sprintf("%s/compat.%s", cwd, ext))
+
+    if !reflect.DeepEqual(string(content), fileContent) {
+      it.Error("content does not match file content")
+    }
+	})
+
+	if err := CleanFile(ext); err != nil {
+		t.Errorf("Couldn't remove comapt.%s", ext)
 	}
 }
