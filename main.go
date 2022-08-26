@@ -10,10 +10,17 @@ import (
 	"github.com/omarahm3/compat/compat"
 )
 
+const (
+	compat_file = "compat"
+)
+
 func main() {
 	flag.Parse()
 
-	filePath, err := getCompatFilePath()
+	path, err := os.Getwd()
+	must(err)
+
+	filePath, err := getCompatFilePath(path)
 	must(err)
 
 	content := readFile(*filePath)
@@ -22,39 +29,19 @@ func main() {
 	must(err)
 }
 
-func getCompatFilePath() (*string, error) {
-	path, err := os.Getwd()
+func getCompatFilePath(cwd string) (*string, error) {
+	ymlFile := fmt.Sprintf("%s/%s.yml", cwd, compat_file)
+	yamlFile := fmt.Sprintf("%s/%s.yaml", cwd, compat_file)
 
-	if err != nil {
-		return nil, err
+	if _, err := os.Stat(ymlFile); !os.IsNotExist(err) {
+		return &ymlFile, nil
 	}
 
-	var f string
-
-	ymlPath, err := checkCompatFile(fmt.Sprintf("%s/compat.yml", path))
-
-	if errors.Is(err, os.ErrNotExist) {
-		yamlPath, err := checkCompatFile(fmt.Sprintf("%s/compat.yaml", path))
-		if errors.Is(err, os.ErrNotExist) {
-			return nil, fmt.Errorf("compat file does not exist")
-		}
-
-		f = *yamlPath
-	} else {
-		f = *ymlPath
+	if _, err := os.Stat(yamlFile); !os.IsNotExist(err) {
+		return &yamlFile, nil
 	}
 
-	return &f, nil
-}
-
-func checkCompatFile(path string) (*string, error) {
-	_, err := os.Stat(path)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return &path, nil
+	return nil, errors.New("Compat file was not found. Please consider creating one.")
 }
 
 func readFile(file string) []byte {
