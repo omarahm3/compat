@@ -50,7 +50,16 @@ It depends on the use case, to use [extends](https://docs.docker.com/compose/ext
 Compat depends on a new file `compat.yaml` that is in the exact same syntax as `docker-compose.yaml` for only single purpose which is to allow the use of `compat` service property.
 Running `compat` will actually parse the file by looking for `inherit` and for any `base_*` services, will reuse whatever under `base_*` and add them to services.
 
+## Install
+
+If you already have golang installed:
+
+```
+go install github.com/omarahm3/compat@latest
+```
+
 ## TODO
 
 - [X] Tests
 - [ ] Allow multiple inheritance?
+- [ ] Add release workflow for automated releases
