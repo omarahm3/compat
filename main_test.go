@@ -36,7 +36,7 @@ func InitFile(ext string) error {
 	return nil
 }
 
-func CleanFile(ext string) error {
+func RemoveFile(ext string) error {
 	return os.Remove(fmt.Sprintf("%s.%s", COMPAT_FILE, ext))
 }
 
@@ -70,7 +70,7 @@ func TestCompatFileExtensions(t *testing.T) {
 			}
 		})
 
-		if err := CleanFile(ext); err != nil {
+		if err := RemoveFile(ext); err != nil {
 			t.Errorf("Couldn't remove comapt.%s", ext)
 		}
 	}

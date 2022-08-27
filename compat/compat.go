@@ -29,12 +29,18 @@ func Run(content []byte) error {
 	return nil
 }
 
-func write(data *yaml.MapSlice) {
+func yamlToString(data *yaml.MapSlice) strings.Builder {
 	var buf strings.Builder
 	e := yaml.NewEncoder(&buf, yaml.UseSingleQuote(true), yaml.Indent(2))
 
 	err := e.Encode(data)
 	must(err)
+
+  return buf
+}
+
+func write(data *yaml.MapSlice) {
+  buf := yamlToString(data)
 
 	path, err := os.Getwd()
 	must(err)

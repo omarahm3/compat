@@ -52,5 +52,5 @@ Running `compat` will actually parse the file by looking for `inherit` and for a
 
 ## TODO
 
-- [ ] Tests
+- [X] Tests
 - [ ] Allow multiple inheritance?
