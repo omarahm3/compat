@@ -1,6 +1,6 @@
 # Compat
 
-Have you ever wondered WTH there is no inheritance on docker-compose yaml syntax? and why am i writing the same stuff again and again for some services? well .. i had the same questions, and i couldn't find any solution for it, that is why i created this small tool to allow reusability on docker-compose files.
+Have you ever wondered why there is no inheritance on docker-compose yaml syntax? and why am i writing the same stuff again and again for some services? well .. i had the same questions, and i couldn't find any solution for it, that is why i created this small tool to allow reusability on docker-compose files.
 
 It is so simple as doing:
 
