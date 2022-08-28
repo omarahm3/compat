@@ -12,7 +12,14 @@ import (
 )
 
 func TestProcessServices(t *testing.T) {
-	strContent := `version: '3.2'
+	tests := []struct {
+		name     string
+		input    string
+		expected string
+	}{
+		{
+			name: "should process single inherited service",
+			input: `version: '3.2'
 services:
   base_service:
     deploy:
@@ -25,8 +32,8 @@ services:
   mongo:
     inherit: base_service
     container_name: database
-    image: mongo`
-  expected := `version: '3.2'
+    image: mongo`,
+			expected: `version: '3.2'
 services:
   mongo:
     container_name: database
@@ -37,20 +44,63 @@ services:
           memory: 128M
         reservations:
           memory: 128M
-    image: mongo`
-	content := getYamlContent(strContent)
-
-	for _, v := range content {
-		if v.Key.(string) == "services" {
-			processServices(&v)
-		}
+    image: mongo`,
+		},
+		{
+			name: "should process multiple inherited services",
+			input: `version: '3.2'
+services:
+  base_environment:
+    environment:
+      SOME_SECRTET: SECRET
+  base_service:
+    deploy:
+      resources:
+        limits:
+          cpus: '0.1'
+          memory: 128M
+        reservations:
+          memory: 128M
+  mongo:
+    inherit:
+      - base_service
+      - base_environment
+    container_name: database
+    image: mongo`,
+			expected: `version: '3.2'
+services:
+  mongo:
+    container_name: database
+    deploy:
+      resources:
+        limits:
+          cpus: '0.1'
+          memory: 128M
+        reservations:
+          memory: 128M
+    environment:
+      SOME_SECRTET: SECRET
+    image: mongo`,
+		},
 	}
 
-  actual := yamlToString(&content)
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			content := getYamlContent(test.input)
 
-	if !reflect.DeepEqual(strings.TrimSpace(expected), strings.TrimSpace(actual.String())) {
-    t.Errorf("expected:\n%q\nactual:\n%q", expected, actual.String())
-  }
+			for _, v := range content {
+				if v.Key.(string) == "services" {
+					processServices(&v)
+				}
+			}
+
+			actual := yamlToString(&content)
+
+			if !reflect.DeepEqual(strings.TrimSpace(test.expected), strings.TrimSpace(actual.String())) {
+				t.Errorf("expected:\n%q\nactual:\n%q", test.expected, actual.String())
+			}
+		})
+	}
 }
 
 func TestWriteDockerComposeFile(t *testing.T) {
@@ -58,13 +108,6 @@ func TestWriteDockerComposeFile(t *testing.T) {
 services:
   mongo:
     container_name: database
-    deploy:
-      resources:
-        limits:
-          cpus: '0.1'
-          memory: 128M
-        reservations:
-          memory: 128M
     image: mongo`
 	content := getYamlContent(strContent)
 

@@ -41,6 +41,8 @@ services:
     image: mongo
 ```
 
+Or check [./example](./example) to know how to inherit multiple services.
+
 ## Why not `extends` though?
 
 It depends on the use case, to use [extends](https://docs.docker.com/compose/extends) you must have a common "service" not "configuration" while for `inherit` you're just sharing configuration on whatever services.
@@ -61,5 +63,5 @@ go install github.com/omarahm3/compat@latest
 ## TODO
 
 - [X] Tests
-- [ ] Allow multiple inheritance?
+- [X] Allow multiple inheritance?
 - [ ] Add release workflow for automated releases

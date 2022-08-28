@@ -1,5 +1,9 @@
 version: '3.2'
 services:
+  base_environment:
+    environment:
+      SOME_SECRTET: SECRET
+
   base_service:
     deploy:
       resources:
@@ -10,7 +14,9 @@ services:
           memory: 128M
 
   mongo:
-    inherit: base_service
+    inherit:
+      - base_service
+      - base_environment
     container_name: database
     image: mongo
     ports:

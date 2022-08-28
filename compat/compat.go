@@ -3,6 +3,7 @@ package compat
 import (
 	"fmt"
 	"os"
+	"reflect"
 	"strings"
 
 	yaml "github.com/goccy/go-yaml"
@@ -36,11 +37,11 @@ func yamlToString(data *yaml.MapSlice) strings.Builder {
 	err := e.Encode(data)
 	must(err)
 
-  return buf
+	return buf
 }
 
 func write(data *yaml.MapSlice) {
-  buf := yamlToString(data)
+	buf := yamlToString(data)
 
 	path, err := os.Getwd()
 	must(err)
@@ -58,6 +59,32 @@ func writeFile(data strings.Builder, composePath string) {
 }
 
 func processServices(services *yaml.MapItem) {
+	baseServices := buildBaseService(services)
+	svcs := services.Value.(map[string]interface{})
+
+	// Process services
+	for _, s := range svcs {
+		service := s.(map[string]interface{})
+		for serviceKey, serviceName := range service {
+			if serviceKey != extends_token {
+				continue
+			}
+
+			delete(service, serviceKey)
+			inheritedServices := getBaseServicesSlice(serviceName)
+
+			for _, s := range inheritedServices {
+				baseService := baseServices[s].(map[string]interface{})
+
+				for baseServiceKey, baseServiceValue := range baseService {
+					service[baseServiceKey] = baseServiceValue
+				}
+			}
+		}
+	}
+}
+
+func buildBaseService(services *yaml.MapItem) map[string]interface{} {
 	baseServices := make(map[string]interface{})
 	svcs := services.Value.(map[string]interface{})
 
@@ -69,20 +96,24 @@ func processServices(services *yaml.MapItem) {
 		}
 	}
 
-	// Process services
-	for _, service := range svcs {
-		svc := service.(map[string]interface{})
-		for k, baseServiceName := range svc {
-			if k == extends_token {
-				delete(svc, k)
-				baseService := baseServices[baseServiceName.(string)].(map[string]interface{})
+	return baseServices
+}
 
-				for baseServiceKey, baseServiceValue := range baseService {
-					svc[baseServiceKey] = baseServiceValue
-				}
-			}
+func getBaseServicesSlice(baseServices interface{}) []string {
+	t := reflect.TypeOf(baseServices).Kind()
+	var bSvcs []string
+
+	if t == reflect.String {
+		bSvcs = append(bSvcs, baseServices.(string))
+	} else if t == reflect.Slice {
+		for _, s := range baseServices.([]interface{}) {
+			bSvcs = append(bSvcs, s.(string))
 		}
+	} else {
+		must(fmt.Errorf("unknown type: [%s]", t.String()))
 	}
+
+	return bSvcs
 }
 
 func must(err error) {

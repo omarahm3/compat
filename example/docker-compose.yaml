@@ -9,6 +9,8 @@ services:
           memory: 128M
         reservations:
           memory: 128M
+    environment:
+      SOME_SECRTET: SECRET
     image: mongo
     ports:
     - '27017:27017'
