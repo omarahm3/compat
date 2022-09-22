@@ -2,7 +2,6 @@ package main
 
 import (
 	"errors"
-	"flag"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -15,8 +14,6 @@ const (
 )
 
 func main() {
-	flag.Parse()
-
 	path, err := os.Getwd()
 	must(err)
 
